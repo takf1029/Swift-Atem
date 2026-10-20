@@ -14,9 +14,11 @@ extension UInt8 {
 
 extension FixedWidthInteger {
 	init(from slice: ArraySlice<UInt8>) {
-		self.init(bigEndian: slice.withUnsafeBufferPointer{
-			$0.baseAddress!.withMemoryRebound(to: Self.self, capacity: 1) {$0.pointee}
-		})
+		var value: Self = 0
+		for byte in slice.prefix(Self.bitWidth / 8) {
+			value = value << 8 | Self(byte)
+		}
+		self = value
 	}
 
 	var bytes: [UInt8] {
